@@ -516,11 +516,9 @@ Upgrade: HTTP/2.0
             Certain frame types, such as PING (see <xref target="PING"/>),
             impose strict limits on the amount of payload data allowed. 
             Likewise, additional size limits can be set by specific 
-            application uses. For instance, individual DATA and HEADERS 
-            frames used to express HTTP request and response messages 
-            (see <xref target="HTTPLayer" />) are not permitted to exceed 
-            16,383 octets of payload. Sending endpoints MUST NOT exceed such 
-            limits.
+            application uses. For instance, individual DATA, HEADERS and 
+            PUSH_PROMISE frames used to express HTTP request and response 
+            messages are not permitted to exceed their size limits.
           </t>
           <t>
             If an endpoint is unable to process a frame due to the payload size, 
@@ -978,8 +976,9 @@ Upgrade: HTTP/2.0
           <t>
             DATA frames (type=0x0) convey arbitrary, variable-length
             sequences of octets associated with a stream. One or more 
-            DATA frames are used, for instance, to carry HTTP request
-            or response payloads.
+            DATA frames are used to carry HTTP request or response payloads. 
+            In that case, DATA frames are not permitted to exceed 16,383 octets 
+            of payload. Sending endpoints MUST NOT exceed such limits.
           </t>
           
           <t>
@@ -1041,7 +1040,8 @@ Upgrade: HTTP/2.0
                 The payload for a complete set of headers is provided by a sequence of HEADERS
                 frames, terminated by a HEADERS frame with the END_HEADERS flag set.  Once the sequence
                 terminates, the payload of all HEADERS frames are concatenated and interpreted as a
-                single block.
+                single block. Header frames are not permitted to exceed 16,383 octets of payload when they
+                carry HTTP headers. Sending endpoints MUST NOT exceed such limits.
                 <vspace blankLines="1"/>
                 A HEADERS frame without the END_HEADERS flag set MUST be followed by a HEADERS frame
                 for the same stream.  A receiver MUST treat the receipt of any other type of frame
@@ -1288,6 +1288,8 @@ Upgrade: HTTP/2.0
             intends to start sending frames for.  The promised stream
             identifier MUST be a valid choice for the next stream sent by the sender (see <xref
             target="StreamCreation">new stream identifier</xref>).
+            PUSH_PROMISE frames are not permitted to exceed 16,383 octets of payload 
+            when they carry HTTP headers. Sending endpoints MUST NOT exceed such limits.
           </t>
 
           <t>
